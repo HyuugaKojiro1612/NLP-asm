@@ -1,0 +1,50 @@
+% start S
+
+# ###################
+# Grammar Productions
+# ###################
+
+S[+PASSGAP] -> ADJP
+S[-PASSGAP] -> NP VP
+
+NP -> PRO
+
+VP -> V[SUBCAT=_vp] VPP[SUBCAT=_pp]
+VP -> ADVP V[SUBCAT=_vp] VPP[SUBCAT=_pp]
+VP -> ADVP VNP
+VP -> VNP VPP[SUBCAT=_pp]
+VP -> ADVP VNP VPP[SUBCAT=_pp]
+
+VPP[SUBCAT=_pp] -> V[SUBCAT=_pp] PP
+VPP[SUBCAT=_pp] -> V[SUBCAT=_pp] THEM PP
+VNP -> CO NN
+
+PP -> PREP CNP
+
+ADVP -> ADV[AFORM=modal]
+ADVP -> ADV[AFORM=degree]
+ADVP -> ADV[AFORM=degree] ADV[AFORM=modal]
+
+ADJP -> ADV[AFORM=degree] ADJ
+ADJP -> ADV[AFORM=degree] ADJ DET
+
+CNP -> N DET
+CNP -> N
+
+
+# ###################
+# Lexical Productions
+# ###################
+
+DET -> 'này' | 'đấy'
+N -> 'dịch-vụ' | 'sản-phẩm' | 'mặt-hàng'
+NN -> 'nhu-cầu' | 'mong-muốn'
+PREP -> 'về'
+THEM -> 'thêm'
+CO -> 'có'
+V[SUBCAT=_pp] -> 'biết' | 'tìm-hiểu' | 'nghe'
+V[SUBCAT=_vp] -> 'muốn' | 'cần'
+PRO -> 'tôi' | 'mình' 
+ADJ -> 'thú-vị' | 'hấp-dẫn' | 'hợp-lí'
+ADV[AFORM=modal] -> 'không' | 'đang' | 'chẳng'
+ADV[AFORM=degree] -> 'cũng' | 'rất'
