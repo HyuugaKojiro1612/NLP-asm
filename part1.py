@@ -19,7 +19,7 @@ def generate_sentences():
                 file.write('\n')
             
             
-def sentences_parse():
+def parse_sentences():
     grammar_parser = parse.load_parser('grammar.fcfg')
     with open("input/sentences.txt", "r", encoding="utf-8") as file:
         sentences = file.readlines()
@@ -38,4 +38,4 @@ def sentences_parse():
 
 fcfg_to_txt()
 generate_sentences()
-sentences_parse()
+parse_sentences()
