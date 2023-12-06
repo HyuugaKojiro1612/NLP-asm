@@ -10,9 +10,9 @@ parser = '''
                     | transport_query
                     | list_day_query
                 
-    list_tour_query : QDET_LIST PLURAL tour_wh Q_MARK
+    list_tour_query : PRO AUX REPEAT ALL PLURAL tour_wh Q_MARK
     run_time_query  : DEPART city_np ARRIVE city_np TAKE run_time_wh Q_MARK
-    count_tour_query: HAVE tour_how_many ARRIVE city_np Q_MARK
+    count_tour_query: HAVE tour_how_many Q_MARK
     transport_query : tour_np TRAVEL transport_wh Q_MARK
     list_day_query  : ARRIVE city_np HAVE PLURAL day_wh Q_MARK
     
@@ -29,7 +29,6 @@ parser = '''
     
 '''
 lexer = '''
-    QDET_LIST       : "nhắc lại tất cả"
     QDET_HOW_LONG   : "bao lâu"
     QDET_HOW_MANY   : "bao nhiêu"
     QDET_WHICH      : "gì" | "nào"
@@ -50,12 +49,16 @@ lexer = '''
     
     HAVE            : "có"
     PLURAL          : "các" | "những"
+    ALL             : "tất cả"
     TAKE            : "hết"
+    REPEAT          : "nhắc lại"
+    PRO             : "em"
+    AUX             : "có thể"
     
     Q_MARK          : "?"
 '''
 mixin = '''
-    %ignore " " | "em có thể" | "được không" | "vậy" | "nhỉ" | "bạn"
+    %ignore " " | "được không" | "vậy" | "nhỉ" | "bạn"
 '''
 
 class ParserUtil:
@@ -116,7 +119,17 @@ class PrintTreeVisitor(Interpreter):
                 result += " "
         return rule + "(" + result + ")"
 
-class LogicalFormVisitor(Interpreter): pass
+class LogicalFormVisitor(Interpreter):
+    def start(self, tree):
+        return self.get_logical_form(tree.children[0])
+    
+    def get_parts(self, tree):
+        '''
+        Return: [[agents], verb, [themes]]
+        '''
+        agents = []
+        themes = []
+        
 
 class SemanticProcedureGenerator(Interpreter): pass
 
