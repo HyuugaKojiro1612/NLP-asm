@@ -1,8 +1,57 @@
-
-    program     : list_tour_query
-                | run_time_query
-                | count_tour_query
-                | transport_query
-                | list_day_query
+parser = '''
+    start: list_tour_query
+                    | run_time_query
+                    | count_tour_query
+                    | transport_query
+                    | list_day_query
                 
-    list_tour_query
+    list_tour_query : PRO AUX REPEAT ALL PLURAL tour_wh Q_MARK
+    run_time_query  : DEPART city_np ARRIVE city_np TAKE run_time_wh Q_MARK
+    count_tour_query: HAVE tour_how_many Q_MARK
+    transport_query : tour_np TRAVEL transport_wh Q_MARK
+    list_day_query  : ARRIVE city_np HAVE PLURAL day_wh Q_MARK
+    
+    tour_wh         : TOUR
+    run_time_wh     : QDET_HOW_LONG
+    tour_how_many   : QDET_HOW_MANY tour_np
+    transport_wh    : TRANSPORT QDET_WHICH
+    day_wh          : DAY QDET_WHICH
+    
+    city_np         : CITY_NAME
+    tour_np         : TOUR
+                    | TOUR CITY_NAME
+                    | TOUR ARRIVE CITY_NAME
+    
+'''
+lexer = '''
+    QDET_HOW_LONG   : "bao lâu"
+    QDET_HOW_MANY   : "bao nhiêu"
+    QDET_WHICH      : "gì" | "nào"
+    
+    TOUR            : "tour"
+    TRANSPORT       : "phương tiện"
+    DAY             : "ngày"
+    CITY_NAME       : "Hồ Chí Minh" | "Đà Nẵng" | "Nha Trang" | "Phú Quốc"
+    
+    DEPART          : GO " " FROM
+    ARRIVE          : GO | TO
+    TRAVEL          : GO " " BY
+    
+    GO              : "đi"
+    FROM            : "từ"
+    TO              : "tới"
+    BY              : "bằng"
+    
+    HAVE            : "có"
+    PLURAL          : "các" | "những"
+    ALL             : "tất cả"
+    TAKE            : "hết"
+    REPEAT          : "nhắc lại"
+    PRO             : "em"
+    AUX             : "có thể"
+    
+    Q_MARK          : "?"
+'''
+mixin = '''
+    %ignore " " | "được không" | "vậy" | "nhỉ" | "bạn"
+'''

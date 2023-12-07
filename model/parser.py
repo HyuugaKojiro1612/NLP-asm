@@ -10,28 +10,56 @@ parser = '''
                     | transport_query
                     | list_day_query
                 
-    list_tour_query : PRO AUX REPEAT ALL PLURAL tour_wh Q_MARK
-    run_time_query  : DEPART city_np ARRIVE city_np TAKE run_time_wh Q_MARK
-    count_tour_query: HAVE tour_how_many Q_MARK
-    transport_query : tour_np TRAVEL transport_wh Q_MARK
-    list_day_query  : ARRIVE city_np HAVE PLURAL day_wh Q_MARK
+    list_tour_query : service_np service_vp Y_N_PHRASE Q_MARK
+    run_time_query  : tour_vp time_vp Q_MARK
+    count_tour_query: tour_np tour_vp Q_PHRASE Q_MARK
+    transport_query : tour_np tour_vp Q_PHRASE Q_MARK
+    list_day_query  : tour_vp day_vp Q_PHRASE Q_MARK
     
-    tour_wh         : TOUR
+    service_np      : PRO
+    tour_np         : ALL tour_cnp
+                    | tour_cnp
+    tour_cnp        : PLURAL TOUR
+                    | CITY_NAME
+                    | TOUR CITY_NAME
+                    | tour_how_many
+    time_np         : time_cnp
+    time_cnp        : run_time_wh
+    transport_np    : transport_cnp
+    transport_cnp   : transport_wh
+    day_np          : PLURAL day_cnp
+    day_cnp         : day_wh
+    
+    
+    service_vp      : AUX service_vp
+                    | SERVICE_V tour_np
+    time_vp         : TIME_V time_np
+    tour_vp         : TOUR_V tour_pp
+                    | TOUR_V tour_np
+                    | TOUR_V transport_pp
+    day_vp          : DAY_V day_np
+    
+    
+    tour_pp         : tour_pp tour_pp
+                    | P tour_np
+    transport_pp    : P transport_np
+    
     run_time_wh     : QDET_HOW_LONG
-    tour_how_many   : QDET_HOW_MANY tour_np
+    tour_how_many   : QDET_HOW_MANY TOUR
     transport_wh    : TRANSPORT QDET_WHICH
     day_wh          : DAY QDET_WHICH
-    
-    city_np         : CITY_NAME
-    tour_np         : TOUR
-                    | TOUR CITY_NAME
-                    | TOUR ARRIVE CITY_NAME
-    
 '''
 lexer = '''
     QDET_HOW_LONG   : "bao lâu"
-    QDET_HOW_MANY   : "bao nhiêu"
+    QDET_HOW_MANY   : "có bao nhiêu"
     QDET_WHICH      : "gì" | "nào"
+    
+    SERVICE_V       : REPEAT
+    TIME_V          : TAKE
+    TOUR_V          : GO
+    DAY_V           : HAVE
+    
+    P               : FROM | TO | BY
     
     TOUR            : "tour"
     TRANSPORT       : "phương tiện"
@@ -55,6 +83,8 @@ lexer = '''
     PRO             : "em"
     AUX             : "có thể"
     
+    Y_N_PHRASE      : "được không"
+    Q_PHRASE        : "vậy" | "vậy bạn" | "nhỉ"
     Q_MARK          : "?"
 '''
 mixin = '''

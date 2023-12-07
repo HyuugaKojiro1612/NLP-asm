@@ -8,7 +8,7 @@ def main():
     with open("input/questions.txt", "r", encoding="utf-8") as file:
         questions = file.readlines()
     
-    i = 0
+    i = 5
     print(questions[i].strip())
     print(ParserUtil.get_semantic_tree(questions[i].strip()))
     
@@ -21,13 +21,15 @@ def main():
 def solve3():
     with open("input/data.txt", "r", encoding="utf-8") as file:
         lines = file.readlines()
-    
-    for line in lines:
-        print(GrammaticalRelation().get_grammatical_relation(line.strip()[1:-1]))
-        # print(line.strip()[1:-1])
-        # break
+    with open("output/p2-q-$3.txt", "w", encoding="utf-8") as file:
+        for line in lines:
+            GramRel = GrammaticalRelation()
+            rel = GramRel.get_grammatical_relation(line.strip()[1:-1])
+            # print(rel)
+            file.write(rel)
+            file.write('\n')
             
         
 
-# main() # thiết kế nốt grammar đi
-solve3()
+main() # thiết kế nốt grammar đi
+# solve3()
