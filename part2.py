@@ -34,7 +34,12 @@ def solve3():
             file.write(rel)
             file.write('\n')
             
-        
+def solve4():
+    with open("input/questions.txt", "r", encoding="utf-8") as file:
+        questions = file.readlines()
+    i = 0
+    print(questions[i].strip())
+    print(ParserUtil.get_logical_form(questions[i].strip()))
 
-solve1()
+solve2()
 # solve3()

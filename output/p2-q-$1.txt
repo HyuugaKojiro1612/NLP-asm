@@ -7,7 +7,7 @@
                 
     list_tour_query : service_np service_vp Y_N_PHRASE Q_MARK
     run_time_query  : tour_vp time_vp Q_MARK
-    count_tour_query: tour_np tour_vp Q_PHRASE Q_MARK
+    count_tour_query: tour_np tour_vp Q_PHRASE PPRO Q_MARK
     transport_query : tour_np tour_vp Q_PHRASE Q_MARK
     list_day_query  : tour_vp day_vp Q_PHRASE Q_MARK
     
@@ -75,8 +75,9 @@
     TAKE            : "hết"
     REPEAT          : "nhắc lại"
     PRO             : "em"
+    PPRO            : "bạn"
     AUX             : "có thể"
     
     Y_N_PHRASE      : "được không"
-    Q_PHRASE        : "vậy" | "vậy bạn" | "nhỉ"
+    Q_PHRASE        : "vậy" | "nhỉ"
     Q_MARK          : "?"
