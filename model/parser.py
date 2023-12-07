@@ -185,10 +185,12 @@ class LogicalFormVisitor(Interpreter):
         theme = self.visit(tree.children[0])[1].replace("ROLE", "THEME")
         to_loc = self.visit(tree.children[0])[0].replace("ROLE", "TO-LOC")
         instr = self.visit(tree.children[1])[0].replace("ROLE", "INSTR")
-        # print(theme)
         return ["WH-QUERY", "GO e", theme, to_loc, instr]
     
-    def list_day_query(self, tree): pass
+    def list_day_query(self, tree): 
+        theme = self.visit(tree.children[1])[0].replace("ROLE", "THEME")
+        to_loc = self.visit(tree.children[0])[0].replace("ROLE", "TO-LOC")
+        return ["WH-QUERY", "HAVE e", theme, to_loc]
         
     def service_np(self, tree):
         constant = tree.children[0].type
@@ -201,7 +203,6 @@ class LogicalFormVisitor(Interpreter):
             quantifier = tree.children[0].type
             return ["ROLE <{} {}>".format(quantifier, self.visit(tree.children[-1])[0])]
         else:
-            # print(self.visit(tree.children[-1]))
             return self.visit(tree.children[-1])
     
     def tour_cnp(self, tree):
@@ -219,7 +220,6 @@ class LogicalFormVisitor(Interpreter):
             constant2 = tree.children[0].type
             variable2 = constant2[0].lower()
             result += ["ROLE ({} {})".format(constant2, variable2)]
-        # print(result)
         return result
             
     def time_np(self, tree):
@@ -234,9 +234,11 @@ class LogicalFormVisitor(Interpreter):
     def transport_cnp(self, tree):
         return self.visit(tree.children[0])
     
-    def day_np(self, tree): pass
+    def day_np(self, tree):
+        return self.visit(tree.children[-1])
     
-    def day_cnp(self, tree): pass
+    def day_cnp(self, tree):
+        return self.visit(tree.children[-1])
     
     def service_vp(self, tree):
         return self.visit(tree.children[-1])
@@ -245,10 +247,10 @@ class LogicalFormVisitor(Interpreter):
         return self.visit(tree.children[-1])
     
     def tour_vp(self, tree):
-        # print(self.visit(tree.children[-1]))
         return self.visit(tree.children[-1])
     
-    def day_vp(self, tree): pass
+    def day_vp(self, tree):
+        return self.visit(tree.children[-1])
     
     def tour_pp(self, tree):
         if isinstance(tree.children[0], Tree):
@@ -273,8 +275,9 @@ class LogicalFormVisitor(Interpreter):
         constant = tree.children[0].type
         return ["ROLE <WH w {}>".format(constant)]
     
-    def day_wh(self, tree): pass
-        
+    def day_wh(self, tree):
+        constant = tree.children[0].type
+        return ["ROLE <WH w {}>".format(constant)]
         
 
 class SemanticProcedureGenerator(Interpreter): pass
