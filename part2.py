@@ -1,10 +1,15 @@
-from model.parser import ParserUtil
+from model.parser import ParserUtil, PARSER, LEXER
 from model.database import GrammaticalRelation
 
 def get_dividers(index):
     return "======== Cau " + str(index) + " ========\n"
 
-def main():
+def solve1():
+    grammar = PARSER + LEXER
+    with open("output/p2-q-$1.txt", "w", encoding="utf-8") as file:
+        file.write(grammar)
+
+def solve2():
     with open("input/questions.txt", "r", encoding="utf-8") as file:
         questions = file.readlines()
     
@@ -31,5 +36,5 @@ def solve3():
             
         
 
-main()
+solve1()
 # solve3()
