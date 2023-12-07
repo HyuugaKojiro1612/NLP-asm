@@ -12,7 +12,7 @@ PARSER = '''
                 
     list_tour_query : service_np service_vp Y_N_PHRASE Q_MARK
     run_time_query  : tour_vp time_vp Q_MARK
-    count_tour_query: tour_np tour_vp Q_PHRASE Q_MARK
+    count_tour_query: tour_np tour_vp Q_PHRASE PPRO Q_MARK
     transport_query : tour_np tour_vp Q_PHRASE Q_MARK
     list_day_query  : tour_vp day_vp Q_PHRASE Q_MARK
     
@@ -81,10 +81,11 @@ LEXER = '''
     TAKE            : "hết"
     REPEAT          : "nhắc lại"
     PRO             : "em"
+    PPRO            : "bạn"
     AUX             : "có thể"
     
     Y_N_PHRASE      : "được không"
-    Q_PHRASE        : "vậy" | "vậy bạn" | "nhỉ"
+    Q_PHRASE        : "vậy" | "nhỉ"
     Q_MARK          : "?"
 '''
 MIXIN = '''
@@ -151,14 +152,129 @@ class PrintTreeVisitor(Interpreter):
 
 class LogicalFormVisitor(Interpreter):
     def start(self, tree):
-        return self.get_logical_form(tree.children[0])
+        return self.get_logical_form(tree)
+        
+    def get_logical_form(self, tree):
+        propositions = self.visit(tree.children[0])
+        sentence_type = propositions.pop(0)
+        event = propositions.pop(0)
+
+        result = ""
+        for prop in propositions:
+            result += "[{}]".format(prop)
+        result = "({} ({} {}))".format(sentence_type, event, result)
+        return result
+        
+    def list_tour_query(self, tree):
+        agent = self.visit(tree.children[0])[0].replace("ROLE", "AGENT")
+        theme = self.visit(tree.children[1])[0].replace("ROLE", "THEME")
+        return ["COMMAND", "REPEAT e", agent, theme]
     
-    def get_parts(self, tree):
-        '''
-        Return: [[agents], verb, [themes]]
-        '''
-        agents = []
-        themes = []
+    def run_time_query(self, tree):
+        theme = self.visit(tree.children[1])[0].replace("ROLE", "THEME")
+        from_loc = self.visit(tree.children[0])[0].replace("ROLE", "FROM-LOC")
+        to_loc = self.visit(tree.children[0])[1].replace("ROLE", "TO-LOC")
+        return ["WH-QUERY", "TAKE e", theme, from_loc, to_loc]
+
+    def count_tour_query(self, tree):
+        theme = self.visit(tree.children[0])[0].replace("ROLE", "THEME")
+        to_loc = self.visit(tree.children[1])[0].replace("ROLE", "TO-LOC")
+        return ["WH-QUERY", "GO e", theme, to_loc]
+    
+    def transport_query(self, tree): 
+        theme = self.visit(tree.children[0])[1].replace("ROLE", "THEME")
+        to_loc = self.visit(tree.children[0])[0].replace("ROLE", "TO-LOC")
+        instr = self.visit(tree.children[1])[0].replace("ROLE", "INSTR")
+        # print(theme)
+        return ["WH-QUERY", "GO e", theme, to_loc, instr]
+    
+    def list_day_query(self, tree): pass
+        
+    def service_np(self, tree):
+        constant = tree.children[0].type
+        value = tree.children[0].value.upper()
+        variable = constant[0].lower()
+        return ["ROLE ({} {} {})".format(constant, variable, value)]
+    
+    def tour_np(self, tree):
+        if len(tree.children) > 1:
+            quantifier = tree.children[0].type
+            return ["ROLE <{} {}>".format(quantifier, self.visit(tree.children[-1])[0])]
+        else:
+            # print(self.visit(tree.children[-1]))
+            return self.visit(tree.children[-1])
+    
+    def tour_cnp(self, tree):
+        if isinstance(tree.children[0], Tree):
+            return self.visit(tree.children[0])
+        elif tree.children[0].type == "PLURAL":
+            constant = tree.children[-1].type
+            variable = constant[0].lower()
+            return ["{} {}".format(variable, constant)]
+        constant = tree.children[-1].type.replace('_', '-')
+        value = tree.children[-1].value
+        variable = value[0].lower()
+        result = ['ROLE ({} {} "{}")'.format(constant, variable, value)]
+        if len(tree.children) > 1:
+            constant2 = tree.children[0].type
+            variable2 = constant2[0].lower()
+            result += ["ROLE ({} {})".format(constant2, variable2)]
+        # print(result)
+        return result
+            
+    def time_np(self, tree):
+        return self.visit(tree.children[0])
+    
+    def time_cnp(self, tree):
+        return self.visit(tree.children[0])
+    
+    def transport_np(self, tree):
+        return self.visit(tree.children[0])
+    
+    def transport_cnp(self, tree):
+        return self.visit(tree.children[0])
+    
+    def day_np(self, tree): pass
+    
+    def day_cnp(self, tree): pass
+    
+    def service_vp(self, tree):
+        return self.visit(tree.children[-1])
+    
+    def time_vp(self, tree):
+        return self.visit(tree.children[-1])
+    
+    def tour_vp(self, tree):
+        # print(self.visit(tree.children[-1]))
+        return self.visit(tree.children[-1])
+    
+    def day_vp(self, tree): pass
+    
+    def tour_pp(self, tree):
+        if isinstance(tree.children[0], Tree):
+            from_pp = self.visit(tree.children[0])
+            to_pp = self.visit(tree.children[-1])
+            return from_pp + to_pp
+        else:
+            return self.visit(tree.children[-1])
+    
+    def transport_pp(self, tree):
+        return self.visit(tree.children[-1])
+    
+    def run_time_wh(self, tree):
+        return ["ROLE <WH w RUN-TIME>"]
+    
+    def tour_how_many(self, tree):
+        constant = tree.children[-1].type
+        variable = constant[0].lower()
+        return ["ROLE <HOW-MANY {} {}>".format(variable, constant)]
+    
+    def transport_wh(self, tree):
+        constant = tree.children[0].type
+        return ["ROLE <WH w {}>".format(constant)]
+    
+    def day_wh(self, tree): pass
+        
         
 
 class SemanticProcedureGenerator(Interpreter): pass
