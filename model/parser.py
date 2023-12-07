@@ -103,7 +103,7 @@ class ParserUtil:
     @staticmethod
     def get_semantic_tree(input):
         tree = ParserUtil.parse(input)
-        formatted_tree = PrintTreeVisitor().visit(tree)
+        formatted_tree = PrintTreeVisitor().visit(tree).replace('_', '-')
         # print(formatted_tree)
         return formatted_tree
     
