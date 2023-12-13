@@ -19,9 +19,9 @@ PARSER = '''
     service_np      : PRO
     tour_np         : ALL tour_cnp
                     | tour_cnp
-    tour_cnp        : PLURAL TOUR
+    tour_cnp        : PLURAL TOUR_N
                     | CITY_NAME
-                    | TOUR CITY_NAME
+                    | TOUR_N CITY_NAME
                     | tour_how_many
     time_np         : time_cnp
     time_cnp        : run_time_wh
@@ -45,7 +45,7 @@ PARSER = '''
     transport_pp    : P transport_np
     
     run_time_wh     : QDET_HOW_LONG
-    tour_how_many   : QDET_HOW_MANY TOUR
+    tour_how_many   : QDET_HOW_MANY TOUR_N
     transport_wh    : TRANSPORT QDET_WHICH
     day_wh          : DAY QDET_WHICH
 '''
@@ -61,7 +61,7 @@ LEXER = '''
     
     P               : FROM | TO | BY
     
-    TOUR            : "tour"
+    TOUR_N          : "tour"
     TRANSPORT       : "phương tiện"
     DAY             : "ngày"
     CITY_NAME       : "Hồ Chí Minh" | "Đà Nẵng" | "Nha Trang" | "Phú Quốc"
