@@ -49,5 +49,5 @@ def solve4():
             file.write('\n')
 
 
-solve2()
+solve3()
 # solve3()
