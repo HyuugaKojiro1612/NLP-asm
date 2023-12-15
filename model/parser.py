@@ -162,7 +162,7 @@ class LogicalFormVisitor(Interpreter):
         result = ""
         for prop in propositions:
             result += "[{}]".format(prop)
-        result = "({} ({} {}))".format(sentence_type, event, result)
+        result = "({} ({} {}))".format(sentence_type, event, result).replace("TOUR_N", "TOUR")
         return result
         
     def list_tour_query(self, tree):
