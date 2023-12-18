@@ -126,9 +126,8 @@ class ParserUtil:
     def get_answer(input):
         tree = ParserUtil.parse(input)
         logical_form = LogicalFormVisitor().visit(tree)
-        query, questions_pre, questions, literals = SemanticProcedureGenerator().parser(
-            logical_form)
-        answer = ModelQuery().execute(query, questions_pre, questions, literals)
+        semantic_procedure = SemanticProcedureGenerator().get_semantic_procedure(logical_form)
+        answer = ModelQuery().execute(semantic_procedure)
         # print(answer)
         return answer
     
@@ -326,7 +325,7 @@ class SemanticProcedureGenerator(Interpreter):
                 p = re.findall("\"(.*?)\"", prop)
                 if p == []: continue
                 tokens += [p[0]]
-        # print(tokens)
+        
         literals = []    
         if len(tokens) == 0:
             literals += ["({} {} ?cn)".format(constant, var)]
@@ -341,30 +340,54 @@ class SemanticProcedureGenerator(Interpreter):
             literals += ["(TOUR ?t {})".format(tokens[0].replace(' ', '_'))]
             literals += ["({} ?t ?cc {})".format(constant, var)]
         
-        # print(literals)
         res = ""
         for lit in literals:
             res += ' ' + lit     
         return query + ' ' + var + res
-            
-            
-            
-        # for prop in propositions:
-        #     if "<ALL t TOUR>" in prop:
-        #         constant = "TOUR"
-        #         var = self.symbol_table[constant]
-        #         unc_var = self.symbol_table["CITY-NAME"]
-        #         literals += ["({} {} {})".format(constant, var, unc_var)]
-                
-        #     if "<WH w RUN-TIME>" in prop:
-        #         constant = "RUN-TIME"
-        #         var = self.symbol_table[constant]
                 
     def get_semantic_procedure(self, logical_form):            
         return self.transform(logical_form)           
                 
-        
-        
 
-class ModelQuery(): pass
+
+class ModelQuery(): 
+    def __init__(self):
+        self.answers = {}
+        self.variables = ["?t", "?cn", "?r", "?ts", "?a", "?cc"]
+        for var in self.variables:
+            self.answers[var] = []
+            
+        self.database = None
+        with open("input/data.txt", "r", encoding="utf-8") as file:
+            self.database = file.readlines()
+            
+    def execute(self, sem_pro):
+        request = sem_pro.split(' ')[0]
+        question = sem_pro.split(' ')[1]
+        literals = re.findall("\((.*?)\)", sem_pro)
+        for lit in literals:
+            self.search_answers(lit)
+        
+        res = ""
+        # print('ans', self.answers)
+        for ans in self.answers[question]:
+            res += ans + ' '
+        return res
     
+    def search_answers(self, literal):
+        lit_tokens = literal.split(' ')
+        for data in self.database:
+            data_tokens = data.strip()[1:-1].split(' ')
+            # print(data_tokens)
+            # print(lit_tokens)
+            if data_tokens[0] == lit_tokens[0]:
+                if data_tokens[0] == "TOUR" and data_tokens[1] == lit_tokens[1]:
+                    self.answers[lit_tokens[1]] += [data_tokens[1]]
+                    
+                elif data_tokens[0] == "TOUR" and data_tokens[1] != lit_tokens[1]:
+                    self.answers[lit_tokens[1]] += [data_tokens[1]]
+                    self.answers[lit_tokens[2]] += [data_tokens[2]]
+                    
+                elif data_tokens[0] == "RUN-TIME" and data_tokens[2] == lit_tokens[2] and data_tokens[3] == lit_tokens[3]:
+                    self.answers[lit_tokens[1]] += [data_tokens[1]]
+                    self.answers[lit_tokens[4]] += [data_tokens[4] + ' ' + data_tokens[5]]

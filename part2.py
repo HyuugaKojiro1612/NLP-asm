@@ -60,6 +60,26 @@ def solve4_5():
     i = 5
     print(questions[i].strip())
     print(ParserUtil.get_semantic_procedure(questions[i].strip()))
+    
+def solve5():
+    with open("input/questions.txt", "r", encoding="utf-8") as file:
+        questions = file.readlines()
+    # i = 3
+    # print(questions[i].strip())
+    # print(ParserUtil.get_answer(questions[i].strip()))
+    
+    with open("output/p2-q-$5.txt", "w", encoding="utf-8") as file:
+        i = 0
+        for question in questions:
+            # print(question.strip())
+            if i > 2: break
+            file.write(ParserUtil.get_answer(question.strip()))
+            file.write('\n')
+            i = i + 1
 
+
+solve1()
+solve2()
+solve3()
 solve4()
-# solve3()
+solve5()
