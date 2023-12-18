@@ -1,4 +1,4 @@
-# Customer Service Response System - A NLP Assignment (CO3085)
+# Customer Service Response System - An NLP Assignment (CO3085)
 
 ## Description
 
