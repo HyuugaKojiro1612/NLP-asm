@@ -368,6 +368,9 @@ class ModelQuery():
         for lit in literals:
             self.search_answers(lit)
         
+        if request == "COUNT":
+            return str(len(self.answers[question]))
+        
         res = ""
         # print('ans', self.answers)
         for ans in self.answers[question]:
@@ -381,13 +384,21 @@ class ModelQuery():
             # print(data_tokens)
             # print(lit_tokens)
             if data_tokens[0] == lit_tokens[0]:
-                if data_tokens[0] == "TOUR" and data_tokens[1] == lit_tokens[1]:
+                if data_tokens[0] == "TOUR" and data_tokens[2] == lit_tokens[2]:
                     self.answers[lit_tokens[1]] += [data_tokens[1]]
                     
-                elif data_tokens[0] == "TOUR" and data_tokens[1] != lit_tokens[1]:
+                elif data_tokens[0] == "TOUR" and lit_tokens[2] == "?cn":
                     self.answers[lit_tokens[1]] += [data_tokens[1]]
                     self.answers[lit_tokens[2]] += [data_tokens[2]]
                     
                 elif data_tokens[0] == "RUN-TIME" and data_tokens[2] == lit_tokens[2] and data_tokens[3] == lit_tokens[3]:
                     self.answers[lit_tokens[1]] += [data_tokens[1]]
                     self.answers[lit_tokens[4]] += [data_tokens[4] + ' ' + data_tokens[5]]
+                    
+                elif data_tokens[0] == "BY":
+                    if data_tokens[1] in self.answers[lit_tokens[1]]:
+                        self.answers[lit_tokens[2]] += [data_tokens[2]]
+                        
+                elif data_tokens[0] == "ATIME":
+                    if data_tokens[1] in self.answers[lit_tokens[1]]:
+                        self.answers[lit_tokens[3]] += [data_tokens[3] + ' ' + data_tokens[4]]
