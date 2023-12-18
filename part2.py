@@ -74,8 +74,8 @@ def solve5():
             file.write(ParserUtil.get_answer(question.strip()))
             file.write('\n')
 
-# solve1()
-# solve2()
-# solve3()
-# solve4()
+solve1()
+solve2()
+solve3()
+solve4()
 solve5()
