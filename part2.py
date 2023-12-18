@@ -47,7 +47,19 @@ def solve4():
             # print(question.strip())
             file.write(ParserUtil.get_logical_form(question.strip()))
             file.write('\n')
+        
+        file.write(get_header("SEMANTIC-PROCEDURE"))
+        for question in questions:
+            # print(question.strip())
+            file.write(ParserUtil.get_semantic_procedure(question.strip()))
+            file.write('\n')
 
+def solve4_5():
+    with open("input/questions.txt", "r", encoding="utf-8") as file:
+        questions = file.readlines()
+    i = 5
+    print(questions[i].strip())
+    print(ParserUtil.get_semantic_procedure(questions[i].strip()))
 
 solve4()
 # solve3()

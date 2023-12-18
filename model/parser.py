@@ -280,7 +280,91 @@ class LogicalFormVisitor(Interpreter):
         return ["ROLE <WH w {}>".format(constant)]
         
 
-class SemanticProcedureGenerator(Interpreter): pass
+class SemanticProcedureGenerator(Interpreter):
+    
+    def __init__(self):
+        self.symbol_table = {
+            "TOUR": "?t",
+            "RUN-TIME": "?r",
+            "TRANSPORT": "?ts",
+            "ATIME": "?a",
+            "DAY": "?a",
+            "CITY-NAME": "?cn",
+            "CITY-CODE": "?cc",
+        }
+        self.query_mapping = {
+            "TOUR": "TOUR",
+            "RUN-TIME": "RUN-TIME",
+            "TRANSPORT": "BY",
+            "DAY": "ATIME"
+        }
+        self.city_code = {
+            "Hồ Chí Minh": "HCM",
+            "Phú Quốc": "PQ",
+            "Đà Nẵng": "DN",
+            "Nha Trang": "NT",
+        }
+    
+    def transform(self, logical_form):
+        propositions = re.findall("\[(.*?)\]", logical_form)
+        if "COMMAND" in logical_form:
+            propositions.pop(0)
+        
+        query = "PRINT-ALL"
+        tokens = []
+        constant = ""
+        var = ""
+        if "HOW-MANY" in logical_form:
+            query = "COUNT"
+        
+        for prop in propositions:
+            q = re.findall("<(.*?)>", prop)
+            if q != []:
+                constant = self.query_mapping[q[0].split(' ')[2]]
+                var = self.symbol_table[q[0].split(' ')[2]]
+            else:    
+                p = re.findall("\"(.*?)\"", prop)
+                if p == []: continue
+                tokens += [p[0]]
+        # print(tokens)
+        literals = []    
+        if len(tokens) == 0:
+            literals += ["({} {} ?cn)".format(constant, var)]
+        elif len(tokens) == 2:
+            literals += ["({} ?t {} {} {})".format(constant, self.city_code[tokens[0]], self.city_code[tokens[1]], var)]
+        elif len(tokens) == 1 and query == "COUNT":
+            literals += ["({} {} {})".format(constant, var, tokens[0].replace(' ', '_'))]
+        elif len(tokens) == 1 and constant == "BY":
+            literals += ["(TOUR ?t {})".format(tokens[0].replace(' ', '_'))]
+            literals += ["({} ?t {})".format(constant, var)]
+        else: # len(tokens) == 1 and constant == "ATIME"
+            literals += ["(TOUR ?t {})".format(tokens[0].replace(' ', '_'))]
+            literals += ["({} ?t ?cc {})".format(constant, var)]
+        
+        # print(literals)
+        res = ""
+        for lit in literals:
+            res += ' ' + lit     
+        return query + ' ' + var + res
+            
+            
+            
+        # for prop in propositions:
+        #     if "<ALL t TOUR>" in prop:
+        #         constant = "TOUR"
+        #         var = self.symbol_table[constant]
+        #         unc_var = self.symbol_table["CITY-NAME"]
+        #         literals += ["({} {} {})".format(constant, var, unc_var)]
+                
+        #     if "<WH w RUN-TIME>" in prop:
+        #         constant = "RUN-TIME"
+        #         var = self.symbol_table[constant]
+                
+    def get_semantic_procedure(self, logical_form):            
+        return self.transform(logical_form)           
+                
+        
+        
 
 class ModelQuery(): pass
     

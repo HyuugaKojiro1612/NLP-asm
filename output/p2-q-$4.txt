@@ -5,3 +5,10 @@
 (WH-QUERY (GO e [THEME <HOW-MANY t TOUR>][TO-LOC (CITY-NAME p "Phú Quốc")]))
 (WH-QUERY (GO e [THEME (TOUR t)][TO-LOC (CITY-NAME n "Nha Trang")][INSTR <WH w TRANSPORT>]))
 (WH-QUERY (HAVE e [THEME <WH w DAY>][TO-LOC (CITY-NAME n "Nha Trang")]))
+======== SEMANTIC-PROCEDURE ========
+PRINT-ALL ?t (TOUR ?t ?cn)
+PRINT-ALL ?r (RUN-TIME ?t HCM NT ?r)
+PRINT-ALL ?r (RUN-TIME ?t HCM DN ?r)
+COUNT ?t (TOUR ?t Phú_Quốc)
+PRINT-ALL ?ts (TOUR ?t Nha_Trang) (BY ?t ?ts)
+PRINT-ALL ?a (TOUR ?t Nha_Trang) (ATIME ?t ?cc ?a)

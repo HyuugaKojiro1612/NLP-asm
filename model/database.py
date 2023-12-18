@@ -12,6 +12,8 @@ class GrammaticalRelation():
             rel = self.get_runtime_relation(tokens[1], tokens[2], tokens[3], tokens[4] + " " + tokens[5])
         else: # tokens[0] == "BY":
             rel = self.get_transport_relation(tokens[1], tokens[2])
+        rel = rel.replace("HCMC", "HCM")
+        rel = rel.replace("_", " ")
         return rel
 
 
